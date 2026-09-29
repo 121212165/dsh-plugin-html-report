@@ -1,0 +1,51 @@
+# dsh-plugin-html-report
+
+DeepSeek Harness (dsh) 插件：**把会话转录渲染成自包含 HTML 报告**。读 [transcript](https://github.com/121212165/dsh-plugin-transcript) 的 JSONL 边车，产出单文件、内联样式、零外链的 HTML——发给任何人都能直接双击打开。
+
+适合回答："这次会话我要交给别人看，但不想让他装 dsh、开 Obsidian、或者读 JSONL。"
+
+同系列：[transcript](https://github.com/121212165/dsh-plugin-transcript)（数据源）· [transcript-search](https://github.com/121212165/dsh-plugin-transcript-search)（检索）· [obsidian-push](https://github.com/121212165/dsh-plugin-obsidian-push)（入库）。区别：本插件面向**分享与浏览**，Markdown 那两个面向**归档与检索**。
+
+## 用法
+
+- **`/report`**：渲染**最近活跃的那一个**会话。
+- **`/report <sessionId 前缀>`**：渲染匹配前缀的会话（`session-` 前缀带不带都行）。
+- **`/report all`**：渲染全部会话，按最后活跃时间倒序。
+
+输出示例：
+
+```text
+已渲染 1 份报告：
+C:\Users\<你>\.dsh\html-reports\4bc1bd00-916.html（15 条 / 12,645 字符）
+```
+
+文件名取 sessionId 去掉 `session-` 前缀后截 12 字符（这个截断规则是系列里踩过的坑：早期用 `slice(0,8)` 导致同前缀会话互相覆盖）。
+
+## 产物形态
+
+- 单文件 `<!doctype html>`，样式全部内联，正文不引用任何外部 `src=http…` / `href=http…`；离线、内网、邮件附件场景都成立。
+- 用户/助手消息成"轮次卡片"，**工具调用压成一行 chip 且正文截断到 300 字符**——转录里工具结果可能非常大，报告要的是可读性而不是全量转储。
+- 顶部一行统计：条数 / 用户 / 助手 / 工具 / 字符数 / 完整 sessionId。
+- 正文按 `at` 升序回放，与转录时间线一致。
+- 所有文本、标题、工具名一律 HTML 转义（含 `#` 与 `"`），会话里出现 `<img onerror=...>` 不会变成可执行标签。
+
+## 配置
+
+| 字段 | 默认 | 说明 |
+|---|---|---|
+| `enabled` | `true` | |
+| `dataDir` | `~/.dsh/transcripts` | transcript 边车目录（**只读**） |
+| `outDir` | `~/.dsh/html-reports` | 输出目录，不存在会自动创建 |
+| `title` | `Session Report` | 页面标题；留空则回退为 `Session <id 前 8 位>` |
+
+只读取 `transcript-YYYY-MM.jsonl` 命名的文件；损坏行跳过并计数，**永不改写源文件**。没有转录数据时明确报错并提示先装 transcript，不会输出空页面糊人。
+
+## 安装
+
+`npm i dsh-plugin-html-report`；或克隆后 `npm install`（`prepare` 构建 `lib/`）再链进 profile 的 node_modules。挂载片段见 `cordis.patch.yml`。需要先装 dsh-plugin-transcript 才有数据。
+
+## 验证状态
+
+- 纯函数（转义防注入、统计计数、自包含性与外链检查、工具行压缩、会话选择：缺省最新 / all 倒序 / 前缀匹配含 `session-` 变体 / 交错记录取最后时间）8 个 `node --test` 全绿。
+- 本机 live：对真实 `~/.dsh/transcripts` 边车执行 `/report`，产出 HTML 结构与统计逐项目视通过。
+- 未验证：超大单条消息（>100KB 文本）在浏览器里的渲染表现；长文本仅工具行做截断，用户/助手全文照排。

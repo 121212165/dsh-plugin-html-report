@@ -1,0 +1,9 @@
+# Mounts html-report into a dsh profile.
+- insert:
+    - id: html-report
+      name: dsh-plugin-html-report
+      config:
+        enabled: true
+        # dataDir: ~/.dsh/transcripts    # transcript sidecar dir (shared default)
+        # outDir: ~/.dsh/html-reports
+        title: "Session Report"
