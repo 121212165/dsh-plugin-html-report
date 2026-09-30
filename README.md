@@ -49,3 +49,9 @@ C:\Users\<你>\.dsh\html-reports\4bc1bd00-916.html（15 条 / 12,645 字符）
 - 纯函数（转义防注入、统计计数、自包含性与外链检查、工具行压缩、会话选择：缺省最新 / all 倒序 / 前缀匹配含 `session-` 变体 / 交错记录取最后时间）8 个 `node --test` 全绿。
 - 本机 live：对真实 `~/.dsh/transcripts` 边车执行 `/report`，产出 HTML 结构与统计逐项目视通过。
 - 未验证：超大单条消息（>100KB 文本）在浏览器里的渲染表现；长文本仅工具行做截断，用户/助手全文照排。
+
+## 借鉴来源与差异
+
+| 借鉴来源 | 借鉴了什么 | 我们的差异 |
+|---|---|---|
+| [simonw/claude-code-transcripts](https://github.com/simonw/claude-code-transcripts)（1.7k★） | 「把会话转录发布成可分享页面」这个需求方向 | 它面向 Claude Code 单一格式；本插件读的是 dsh-plugin-transcript 的 JSONL 契约（跨工具），渲染为自包含单文件 HTML，独立实现 |
