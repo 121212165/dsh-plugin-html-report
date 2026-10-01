@@ -1,5 +1,7 @@
 # dsh-plugin-html-report
 
+**EN** · Renders a session into one self-contained HTML file you can open, archive or forward: escaped content, per-turn stats, compressed tool lines (`/report latest` · `/report <prefix>` · `/report all`). · pure functions under test (injection escaping, self-containment / external-link check, session selection) · ran `/report` against real `~/.dsh/transcripts` sidecars and inspected the output · untested: single messages above 100 KB in a browser.
+
 DeepSeek Harness (dsh) 插件：**把会话转录渲染成自包含 HTML 报告**。读 [transcript](https://github.com/121212165/dsh-plugin-transcript) 的 JSONL 边车，产出单文件、内联样式、零外链的 HTML——发给任何人都能直接双击打开。
 
 适合回答："这次会话我要交给别人看，但不想让他装 dsh、开 Obsidian、或者读 JSONL。"
@@ -42,8 +44,21 @@ C:\Users\<你>\.dsh\html-reports\4bc1bd00-916.html（15 条 / 12,645 字符）
 
 ## 安装
 
-`npm i dsh-plugin-html-report`；或克隆后 `npm install`（`prepare` 构建 `lib/`）再链进 profile 的 node_modules。挂载片段见 `cordis.patch.yml`。需要先装 dsh-plugin-transcript 才有数据。
+三步，实测于 `@deepseek-ai/dsh@0.1.7-alpha.1`（需 `pnpm` 在 PATH 上）：
 
+```sh
+# ① 装进 profile：dsh plugin 把参数原样转发给 pnpm，git 包会自动跑 prepare 构建 lib/
+dsh plugin --profile web add github:121212165/dsh-plugin-html-report
+```
+
+② 把本仓库根目录 `cordis.patch.yml` 的内容**并进** `$DSH_HOME/profiles/web/cordis.patch.yml`。
+该文件默认是 `[]`，所以要么整份替换，要么把 insert 条目并进同一个数组；**不要直接追加**——
+追加会形成两个 YAML 文档，启动即报
+`failed to parse overlay ... end of the stream or a document separator is expected`（本机实测踩过）。
+
+③ 重启 dsh。配置层与 client 半都要重启才生效（客户端按 boot 时算出的内容 rev 下发，硬刷新浏览器没用）。
+
+自检挂载：`dsh --profile web --dump-config | grep dsh-plugin-html-report`，应看到该条目。
 ## 验证状态
 
 - 纯函数（转义防注入、统计计数、自包含性与外链检查、工具行压缩、会话选择：缺省最新 / all 倒序 / 前缀匹配含 `session-` 变体 / 交错记录取最后时间）8 个 `node --test` 全绿。
