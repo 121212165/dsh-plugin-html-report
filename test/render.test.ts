@@ -38,3 +38,13 @@ test('tool lines render as compact chips, not full turns', () => {
   assert.ok(html.includes('🔧 glob'));
   assert.ok(!html.includes('class="turn tool"'));
 });
+
+test('dark mode: the page carries its own two-theme tokens and follows the OS scheme', () => {
+  const html = renderHtml([line({ text: 'hi' })], { sessionId: 'session-abc' });
+  // the standalone page cannot see dsh's --dsw-alias tokens — it ships its own
+  assert.ok(html.includes('@media (prefers-color-scheme:dark)'), 'a dark override exists');
+  assert.ok(html.includes('--fg:'), 'colors are tokenized, not sprinkled');
+  assert.ok(html.includes('background:transparent'), 'no hardcoded light page background');
+  // light theme keeps the original accent hues via the same tokens
+  assert.ok(html.includes('--assistant-accent:#FF6B2C'), html);
+});
