@@ -1,5 +1,8 @@
 # dsh-plugin-html-report
 
+> 🧩 **dsh 插件家族**（22 件）：总目录 **[dsh-plugin-family](https://github.com/121212165/dsh-plugin-family)** ｜ 明星插件：**[ide-hub](https://github.com/121212165/dsh-plugin-ide-hub)** 跨 IDE 统一管理 · **[task-forge](https://github.com/121212165/dsh-plugin-task-forge)** 跨窗口无损交接 · **[quota](https://github.com/121212165/dsh-plugin-quota)** 实时用量仪表
+
+
 **EN** · Renders a session into one self-contained HTML file you can open, archive or forward: escaped content, per-turn stats, compressed tool lines (`/report latest` · `/report <prefix>` · `/report all`). · pure functions under test (injection escaping, self-containment / external-link check, session selection) · ran `/report` against real `~/.dsh/transcripts` sidecars and inspected the output · untested: single messages above 100 KB in a browser.
 
 DeepSeek Harness (dsh) 插件：**把会话转录渲染成自包含 HTML 报告**。读 [transcript](https://github.com/121212165/dsh-plugin-transcript) 的 JSONL 边车，产出单文件、内联样式、零外链的 HTML——发给任何人都能直接双击打开。
