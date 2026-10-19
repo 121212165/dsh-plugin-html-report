@@ -8,9 +8,10 @@ import Schema from '@deepseek-ai/schemastery';
 import type {} from '@deepseek-ai/dsh-commands';
 import type {} from '@deepseek-ai/dsh-tools';
 import { defineTool } from '@deepseek-ai/dsh-tools';
-import { mkdirSync, readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
+import { mkdirSync, readFileSync, existsSync, readdirSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
+import { writeFileAtomic } from '@dsh-family/kit';
 
 import { parseJsonl, type TranscriptLine } from './line.ts';
 import { pickSessions } from './select.ts';
@@ -75,7 +76,7 @@ export function apply(ctx: Context, config: Config): void {
       const lines = groups.get(sessionId)!;
       const stats = reportStats(lines);
       const file = join(outDir, `${sessionId.replace(/^session-/, '').slice(0, 12)}.html`);
-      writeFileSync(file, renderHtml(lines, { sessionId, title: config.title }), 'utf8');
+      writeFileAtomic(file, renderHtml(lines, { sessionId, title: config.title }));
       written.push(`${file}（${stats.entries} 条 / ${stats.chars.toLocaleString()} 字符）`);
     }
     return { kind: 'success', text: `已渲染 ${written.length} 份报告：\n${written.join('\n')}` };
