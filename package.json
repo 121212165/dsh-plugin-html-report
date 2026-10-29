@@ -27,6 +27,11 @@
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "catalog": {
+      "category": "会话与知识库",
+      "blurb": "会话渲染成自包含 HTML 报告（深色模式、无外链），分享/归档用",
+      "entries": "`/report`"
     }
   },
   "engines": {
